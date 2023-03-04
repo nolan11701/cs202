@@ -5,7 +5,6 @@
 
 using namespace std;
 map<string, int> visited;
-
 map<string, int> steps;
 
 int shortest_path = -1;
@@ -20,9 +19,7 @@ int dx[NUM_DIRS][9] = {{0, 0, 1, 3, 3, 4, 6, 6, 7},
                        {3, 4, 5, 6, 7, 8, 6, 7, 8}};
 
 bool is_possible(string str, int idx) {
-    bool ret = (idx >= 0 && visited.find(str) == visited.end());
-    // cout << "possible " << str << " " << idx << " " << ret << "\n";
-    return ret;
+    return visited.find(str) == visited.end();
 }
 string swap_string(string s, int idx, int nidx) {
     // cout << "swap: " << s << " " << idx << " " << nidx;
@@ -37,6 +34,7 @@ string swap_string(string s, int idx, int nidx) {
     return s;
 }
 void BBFS(string str1, int idx1, string str2, int idx2) {
+    // {str1, idx1}, {str2, idx2}
     q1.push(make_pair(str1, idx1));
     q2.push(make_pair(str2, idx2));
     visited[str1] = 1;
@@ -74,9 +72,9 @@ void BBFS(string str1, int idx1, string str2, int idx2) {
                 q1.push(point);
             } else if (visited[point.first] == 2) {
                 // found the connection
-                shortest_path = steps[str] + steps[point.first];
+                shortest_path = steps[str] + steps[point.first] +1;
 
-                cout << shortest_path + 1;
+                cout << shortest_path;
                 exit(1);
             }
         }
@@ -109,9 +107,9 @@ void BBFS(string str1, int idx1, string str2, int idx2) {
             } else if (visited[point.first] == 1) {
                 // found the connection
 
-                shortest_path = steps[str] + steps[point.first];
+                shortest_path = steps[str] + steps[point.first] +1;
 
-                cout << shortest_path + 1;
+                cout << shortest_path;
                 exit(1);
             }
         }
@@ -128,9 +126,4 @@ int main() {
 
     BBFS(start, start_idx, end, end_idx);
     cout << "-1";
-
-    // for (map<string, int>::iterator it = visited.begin(); it != visited.end();
-    //      it++) {
-    //     cout << it->first << ' ' << it->second << '\n';
-    // }
 }
