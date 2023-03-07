@@ -15,7 +15,8 @@ int bfs (int start) {
     // visited (start)
     visited[start] = 1;
     int cnt = 1;
-    // dis[node] = 1
+    // dis[node] = 1 
+    
     
     // while queue not empty
     while (q.size()){
