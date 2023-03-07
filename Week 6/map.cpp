@@ -17,4 +17,8 @@ int main() {
          it++) {
         cout << it->first << ' ' << it->second << '\n';
     }
+
+    for (auto &i : m) {
+        cout<< i.first;
+    }
 }
