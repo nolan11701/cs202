@@ -20,7 +20,6 @@ bool is_possible(int x, int y) {
     // cout << (x >= 0 && y >= 0 && x < n && y < n && visited[x][y] != 1);
     return (x >= 0 && y >= 0 && x < n && y < n && vis[x][y] == -1);
 }
-
 int bfs() {
     // Initialization
     queue<Point> q;

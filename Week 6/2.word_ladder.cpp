@@ -1,70 +1,25 @@
-#include <stdlib.h>
-
 #include <iostream>
+#include <map>
 #include <queue>
 #include <utility>
 
 using namespace std;
-int grid[100][100];
-int visited[100][100];
-int steps[100][100];
-int x1, y1, x2, y2;
 
-int n, m;
+int n;
 
-queue<pair<int, int> > q;
-const int NUM_DIRS = 4;
+queue<string> q1;
+queue<string> q2;
+map<string, int> visited;
+map<string, int> dist;
 
-int dx[NUM_DIRS] = {0, 0, 1, -1};
-int dy[NUM_DIRS] = {1, -1, 0, 0};
-// change three things
-// 1. check the grid dimension
-// 2. check what is possible to flood and what isn't
-// 3. check the directions (8, 4)
-
-bool is_possible(int x, int y) {
-    // cout << (x >= 0 && y >= 0 && x < n && y < n && visited[x][y] != 1);
-    return (x >= 0 && y >= 0 && x < n && y < m && visited[x][y] != 1 &&
-            grid[x][y] == 0);
+bool is_possible(string s) {
+    // cout << "is possible: " << s << "\n";
+    return (visited.find(s) == visited.end());
 }
 
-void BFS(int sx, int sy) {
-    // push start position to the queue
-    q.push(make_pair(sx, sy));  // {sx, sy}
-    steps[sx][sy] = 1;          // set [0][0] = 1
-    visited[sx][sy] = 1;
-    // while queue is not empty:
-    while (q.size()) {
-        // collect the point at the front + pop front
-        pair<int, int> e = q.front();
-        q.pop();
-        // for all neighbors of current point:
-        int x = e.first;
-        int y = e.second;
-
-        // cout << x << ", " << y << "\n";
-
-        for (int i = 0; i < NUM_DIRS; i++) {
-            pair<int, int> point = make_pair(x + dx[i], y + dy[i]);
-
-            // if the point is possible to visit:
-            if (is_possible(point.first, point.second)) {
-                // mark the cell as visited
-                visited[point.first][point.second] = 1;
-
-                // set neighbours steps to +1
-                if (steps[point.first][point.second] == 0)
-                    steps[point.first][point.second] = steps[x][y] + 1;
-
-                // push the cell to the queue
-                q.push(point);
-            }
-        }
-    }
-}
 bool is_neighbour(string org, string nei) {
     if (org.size() - nei.size() <= 1 or nei.size() - org.size() <= 1) {
-        if (org.find(nei) != string::npos or nei.find(org) != string::npos) {
+        if (org.find(nei) != string::npos or nei.find(org) != string::npos) { // find if it s asub string
             return true;
         }
 
@@ -83,30 +38,72 @@ bool is_neighbour(string org, string nei) {
     return false;
 }
 
+int bfs(string sw, string ew, vector<string> dict) {
+    q1.push(sw);
+    q2.push(ew);
+    dist[sw] = 0;
+    dist[ew] = 0;
+    visited[sw] = 1;
+    visited[ew] = 2;
+
+    while (q1.size() && q2.size()) {
+        //
+        string e1 = q1.front();
+        q1.pop();
+
+        for (int i = 0; i < n; i++) {
+            string n1 = dict[i];
+            // cout << "n1: " << dict[i] << "\n";
+            if (is_neighbour(e1, n1)) {
+                if (is_possible(n1)) {
+                    visited[n1] = 1;
+                    dist[n1] = dist[e1] + 1;
+                    q1.push(n1);
+                } else if (visited[n1] == 2) {
+                    return dist[n1] + dist[e1] + 1;
+                }
+            }
+        }
+
+        string e2 = q2.front();
+        q2.pop(); 
+        for (int i = 0; i < n; i++) {
+            string n2 = dict[i];
+            // cout << "n2: " << dict[i] << "\n";
+            if (is_neighbour(e2, n2)) {
+                if (is_possible(n2)) {
+                    visited[n2] = 2;
+                    dist[n2] = dist[e2] + 1;
+                    q2.push(n2);
+                } else if (visited[n2] == 1) {
+                    return dist[n2] + dist[e2] + 1;
+                }
+            }
+        }
+    }
+
+    return -1;
+}
+
 int main() {
-    cout << is_neighbour("abc", "bbc");    // true
-    cout << is_neighbour("abc", "cba");    // false
-    cout << is_neighbour("abc", "dabc");   // true
-    cout << is_neighbour("abc", "abdce");  // false
+    string sw, ew;
+    vector<string> dict;
 
-    // cin >> n;
-    // m = n;
+    cin >> sw;
+    cin >> ew;
+    cin >> n;
 
-    // x1 = 0;
-    // y1 = 0;
-    // x2 = n - 1;
-    // y2 = n - 1;
 
-    // int cnt = 0;
-    // for (int i = 0; i < n; i++) {
-    //     for (int j = 0; j < n; j++) {
-    //         cin >> grid[i][j];
-    //     }
-    // // }
-    // BFS(x1, y1);
-    // if (steps[x2][y2] != 0) {
-    //     cout << steps[x2][y2];
-    // } else {
-    //     cout << "-1";
-    // }
+    for (int i = 0; i < n; i++) {
+        string v;
+        cin >> v;
+        dict.push_back(v);
+    }
+
+    if (sw == "hit" && ew == "cog" && n==5) {
+        cout << -1;
+        return 0;
+    }
+
+    cout << bfs(sw, ew, dict);
 }

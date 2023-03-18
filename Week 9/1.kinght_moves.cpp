@@ -41,19 +41,19 @@ int bfs() {
         Point e = q.front();
         q.pop();
         // for all neighbors of current point:
-        int x = e.col;
-        int y = e.row;
-        if (x == ed.col && y == ed.row) {
+        int x = e.row;
+        int y = e.col;
+        if (x == ed.row && y == ed.col) {
             ans = vis[x][y];
             break;
         }
         for (int i = 0; i < 8; i++) {
-            Point point = {x + dc[i], y + dr[i]};
+            Point point = {x + dr[i], y + dc[i]};
 
             // if the point is possible to visit:
-            if (is_possible(point.col, point.row)) {
+            if (is_possible(point.row, point.col)) {
                 // mark the cell as visited
-                vis[point.col][point.row] = vis[x][y] + 1;
+                vis[point.row][point.col] = vis[x][y] + 1;
 
                 // push the cell to the queue
                 q.push(point);
